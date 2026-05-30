@@ -1,206 +1,129 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SidebarAdmin from '../SidebarAdmin'
+import { api } from '../api'
+
+const PAGE_SIZE = 10
 
 export default function ManajemenAkun() {
-  // 'list' untuk tabel akun, 'edit' untuk form ubah data
-  const [view, setView] = useState('list')
-  // State untuk tab yang aktif
-  const [activeTab, setActiveTab] = useState('sekolah')
+  const [schools, setSchools] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    api.get('/admin/schools')
+      .then((res) => setSchools(res.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const filtered = schools.filter((s) =>
+    !search || s.name.toLowerCase().includes(search.toLowerCase()) || (s.email || '').toLowerCase().includes(search.toLowerCase())
+  )
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  const handleSearch = (val) => { setSearch(val); setPage(1) }
 
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      
       <main className="flex-1 p-8 overflow-y-auto">
-        
-        {/* --- TAMPILAN 1: DAFTAR MANAJEMEN AKUN --- */}
-        {view === 'list' && (
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
-              <h1 className="text-4xl font-black text-gray-900">Pendaftaran</h1>
-              <p className="text-lg font-bold text-gray-700">Manajemen Akun</p>
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
+            <h1 className="text-4xl font-black text-gray-900">Pendaftaran</h1>
+            <p className="text-lg font-bold text-gray-700">Manajemen Akun</p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Pendaftaran</p>
+                <h2 className="text-lg font-black text-gray-800 leading-tight">Manajemen Akun Sekolah</h2>
+              </div>
+              <input
+                type="text"
+                placeholder="Cari sekolah..."
+                value={search}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="w-64 px-4 py-2 rounded-lg text-sm outline-none bg-[#D1E9FF] border border-[#A5D5FF] text-gray-700 placeholder-gray-400 focus:border-[#2577F1] transition"
+              />
+              <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2">
+                <span className="text-2xl font-black text-[#2577F1] leading-none">{schools.length}</span>
+                <span className="text-xs font-semibold text-gray-500 leading-tight">Total<br/>Sekolah</span>
+              </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm overflow-hidden min-h-[500px]">
-              
-              {/* Header Card & Filter */}
-              <div className="p-6 flex justify-between items-center border-b border-gray-100">
-                <h2 className="font-bold text-gray-800 text-lg w-1/3 leading-tight">
-                  Manajemen Akun<br/>Pengguna
-                </h2>
-                <input 
-                  type="text" 
-                  placeholder="Cari Pengguna....." 
-                  className="w-1/3 p-3 bg-[#D1E9FF] rounded-xl outline-none border border-[#A5D5FF] text-gray-700 font-semibold text-center"
-                />
-                <div className="w-1/3 flex justify-end relative">
-                  <select className="p-3 bg-[#D1E9FF] rounded-xl font-bold text-gray-800 outline-none border border-[#A5D5FF] cursor-pointer appearance-none pr-10 w-40">
-                    <option>Semua (9)</option>
-                  </select>
-                  <span className="absolute right-4 top-3 text-gray-800 pointer-events-none font-bold">v</span>
-                </div>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex justify-around items-center p-4 border-b border-gray-200 font-bold text-gray-700 text-lg">
-                <div 
-                  onClick={() => setActiveTab('mitra')} 
-                  className={`cursor-pointer px-6 py-2 rounded-xl transition ${activeTab === 'mitra' ? 'bg-[#E0F2FE] text-gray-900' : 'hover:bg-gray-50'}`}
-                >
-                  Mitra SPPG (4)
-                </div>
-                <div 
-                  onClick={() => setActiveTab('sekolah')} 
-                  className={`cursor-pointer px-6 py-2 rounded-xl transition ${activeTab === 'sekolah' ? 'bg-[#E0F2FE] text-gray-900' : 'hover:bg-gray-50'}`}
-                >
-                  Sekolah (9)
-                </div>
-                <div 
-                  onClick={() => setActiveTab('siswa')} 
-                  className={`cursor-pointer px-6 py-2 rounded-xl transition ${activeTab === 'siswa' ? 'bg-[#E0F2FE] text-gray-900' : 'hover:bg-gray-50'}`}
-                >
-                  Siswa (1.627)
-                </div>
-              </div>
-
-              {/* Table */}
-              <table className="w-full text-sm text-left">
-                <thead className="bg-[#EAEAEA] text-gray-800 font-bold">
+            {loading ? (
+              <div className="p-10 text-center text-gray-400 font-bold">Memuat data...</div>
+            ) : (
+              <table className="w-full text-sm text-left border-collapse">
+                <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
                   <tr>
-                    <th className="p-4 pl-6 w-[20%]">Nama Sekolah</th>
-                    <th className="p-4 text-center w-[25%]">E-mail Login</th>
-                    <th className="p-4 text-center w-[15%]">Jumlah<br/>Siswa</th>
-                    <th className="p-4 text-center w-[25%]">SPPG<br/>Pemasok</th>
-                    <th className="p-4 w-[15%]"></th>
+                    <th className="px-4 py-2.5 border border-gray-300">Nama Sekolah</th>
+                    <th className="px-4 py-2.5 border border-gray-300 text-center">E-mail Login</th>
+                    <th className="px-4 py-2.5 border border-gray-300 text-center">Jenjang</th>
+                    <th className="px-4 py-2.5 border border-gray-300 text-center">Jml. Siswa</th>
+                    <th className="px-4 py-2.5 border border-gray-300 text-center">SPPG Pemasok</th>
+                    <th className="px-4 py-2.5 border border-gray-300 text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="font-bold text-gray-700">
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SDN 1 Subang</td>
-                    <td className="p-4 text-center underline">SDN1.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">90</td>
-                    <td className="p-4 text-center">SPPG Indonesia</td>
-                    <td className="p-4 text-center">
-                      <button onClick={() => setView('edit')} className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SDN 2 Subang</td>
-                    <td className="p-4 text-center underline">SDN2.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">91</td>
-                    <td className="p-4 text-center">SPPG Ceria</td>
-                    <td className="p-4 text-center">
-                      <button className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SDN 3 Subang</td>
-                    <td className="p-4 text-center underline">SDN3.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">91</td>
-                    <td className="p-4 text-center">SPPG Ceria</td>
-                    <td className="p-4 text-center">
-                      <button className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SDN 4 Subang</td>
-                    <td className="p-4 text-center underline">SDN4.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">90</td>
-                    <td className="p-4 text-center">SPPG Sekolah Kita</td>
-                    <td className="p-4 text-center">
-                      <button className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SMPN 1 Subang</td>
-                    <td className="p-4 text-center underline">SMPN1.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">311</td>
-                    <td className="p-4 text-center">SPPG Indonesia</td>
-                    <td className="p-4 text-center">
-                      <button className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SMPN 2 Subang</td>
-                    <td className="p-4 text-center underline">SMPN2.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">298</td>
-                    <td className="p-4 text-center">SPPG Anak Sekolah</td>
-                    <td className="p-4 text-center">
-                      <button className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4 pl-6">SMPN 3 Subang</td>
-                    <td className="p-4 text-center underline">SMPN3.Subang@mbg.ac.id</td>
-                    <td className="p-4 text-center">322</td>
-                    <td className="p-4 text-center">SPPG Sekolah Kita</td>
-                    <td className="p-4 text-center">
-                      <button className="bg-[#1E73E8] text-white px-6 py-1.5 rounded-md text-xs hover:bg-blue-700 transition">Edit</button>
-                    </td>
-                  </tr>
+                <tbody className="text-gray-700">
+                  {filtered.length === 0 && (
+                    <tr><td colSpan={6} className="px-4 py-6 text-center text-gray-400 font-semibold border border-gray-200">Belum ada akun sekolah</td></tr>
+                  )}
+                  {paginated.map((s) => (
+                    <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-2.5 border border-gray-200 font-semibold text-gray-800 whitespace-nowrap">{s.name}</td>
+                      <td className="px-4 py-2.5 border border-gray-200 text-center text-blue-600 underline text-xs whitespace-nowrap">{s.email}</td>
+                      <td className="px-4 py-2.5 border border-gray-200 text-center text-gray-600 whitespace-nowrap">{s.grade || '-'}</td>
+                      <td className="px-4 py-2.5 border border-gray-200 text-center font-semibold">{s.student_count || 0}</td>
+                      <td className="px-4 py-2.5 border border-gray-200 text-center text-gray-600">{s.sppg_name || '-'}</td>
+                      <td className="px-4 py-2.5 border border-gray-200 text-center">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          {s.status === 'active' ? 'Aktif' : s.status || '-'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* --- TAMPILAN 2: EDIT AKUN --- */}
-        {view === 'edit' && (
-          <div className="max-w-5xl mx-auto relative pt-4">
-            {/* Tombol Back */}
-            <button 
-              onClick={() => setView('list')} 
-              className="absolute left-0 top-4 text-4xl font-black text-gray-900 hover:text-blue-600 transition"
-            >
-              &lt;
-            </button>
-
-            <div className="flex gap-12 mt-12 items-start justify-center">
-              
-              {/* Sisi Kiri: Gambar & Judul */}
-              <div className="w-[45%] flex flex-col items-center">
-                <h2 className="text-3xl font-black text-gray-900 mb-8 text-center">SD Negeri 1 Subang</h2>
-                <img src="/sekolah.png" alt="SDN 1 Subang" className="w-full max-w-sm h-auto object-cover border border-gray-300 shadow-sm bg-gray-200" />
-              </div>
-
-              {/* Sisi Kanan: Form Edit */}
-              <div className="w-[55%] flex flex-col items-center">
-                <div className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-md">
-                  <h3 className="text-3xl font-black text-gray-900 mb-6">Edit</h3>
-                  
-                  <div className="space-y-4 font-bold">
-                    <div>
-                      <label className="block text-sm text-gray-800 mb-1">Nama Sekolah</label>
-                      <input type="text" className="w-full bg-[#E0F2FE] p-3 rounded-xl outline-none text-gray-700" />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-800 mb-1">Lokasi</label>
-                      <input type="text" className="w-full bg-[#E0F2FE] p-3 rounded-xl outline-none text-gray-700" />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-800 mb-1">E-Mail</label>
-                      <input type="email" className="w-full bg-[#E0F2FE] p-3 rounded-xl outline-none text-gray-700" />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-800 mb-1">Password</label>
-                      <input type="password" className="w-full bg-[#E0F2FE] p-3 rounded-xl outline-none text-gray-700" />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-800 mb-1">No. Handphone</label>
-                      <input type="text" className="w-full bg-[#E0F2FE] p-3 rounded-xl outline-none text-gray-700" />
-                    </div>
-                  </div>
-                </div>
-
-                <button className="bg-[#007BFF] text-white px-8 py-3 rounded-xl font-bold mt-6 shadow-sm hover:bg-blue-600 transition">
-                  Simpan Perubahan
+            {!loading && (
+              <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
+                <span className="text-xs text-gray-500 mr-2">
+                  {filtered.length === 0 ? '0' : `${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, filtered.length)}`} dari {filtered.length} sekolah
+                </span>
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2.5 py-1 rounded border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  &lsaquo;
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`px-2.5 py-1 rounded border text-xs font-semibold transition-colors ${p === currentPage ? 'bg-[#2577F1] text-white border-[#2577F1]' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-2.5 py-1 rounded border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  &rsaquo;
                 </button>
               </div>
-
-            </div>
+            )}
           </div>
-        )}
-
+        </div>
       </main>
     </div>
   )

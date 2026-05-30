@@ -9,7 +9,7 @@ import KelolaSekolah from './pages/KelolaSekolah'
 import PendaftaranMitra from './pages/PendaftaranMitra'
 import ManajemenAkun from './pages/ManajemenAkun'
 import LaporanMasuk from './pages/LaporanMasuk'
-import DistribusiMakanan from './pages/DistribusiMakanan'
+// import DistribusiMakanan from './pages/DistribusiMakanan' // coming soon
 import AkunAdmin from './pages/AkunAdmin'
 import PengaturanAdmin from './pages/PengaturanAdmin'
 
@@ -28,7 +28,7 @@ export default function App() {
         <Route path="/admin/pendaftaran-mitra" element={<PendaftaranMitra />} />
         <Route path="/admin/manajemen-akun" element={<ManajemenAkun />} />
         <Route path="/admin/laporan-masuk" element={<LaporanMasuk />} />
-        <Route path="/admin/distribusi-makanan" element={<DistribusiMakanan />} />
+        {/* <Route path="/admin/distribusi-makanan" element={<DistribusiMakanan />} /> */}{/* coming soon */}
         <Route path="/admin/akun" element={<AkunAdmin />} />
         <Route path="/admin/pengaturan" element={<PengaturanAdmin />} />
         

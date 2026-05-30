@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { api } from './api'
 
 export default function SidebarAdmin() {
   const navigate = useNavigate()
   const location = useLocation()
   const scrollRef = useRef(null)
+  const [adminName, setAdminName] = useState('')
 
   const isActive = (path) => location.pathname.includes(path)
 
@@ -13,6 +15,12 @@ export default function SidebarAdmin() {
     if (savedScroll && scrollRef.current) {
       scrollRef.current.scrollTop = parseInt(savedScroll, 10)
     }
+  }, [])
+
+  useEffect(() => {
+    api.get('/profile/detail')
+      .then((res) => setAdminName(res.data?.name || res.name || ''))
+      .catch(() => {})
   }, [])
 
   const handleScroll = (e) => {
@@ -34,7 +42,7 @@ export default function SidebarAdmin() {
         <p className="font-bold flex items-center gap-2 text-sm">
           <span>📍</span> Kecamatan Ciasem, Subang
         </p>
-        <p className="text-[10px] font-medium text-blue-100 mt-1">Admin: Princess Kurang Tidur Squad</p>
+        <p className="text-[10px] font-medium text-blue-100 mt-1">Admin: {adminName || '...'}</p>
       </div>
 
       <nav 
@@ -101,13 +109,15 @@ export default function SidebarAdmin() {
             <span>Laporan Masuk</span>
             {isActive('laporan-masuk') && <span>&gt;</span>}
           </div>
-          <div 
+          {/* coming soon
+          <div
             onClick={() => navigate('/admin/distribusi-makanan')}
             className={`p-3 text-sm font-semibold cursor-pointer rounded-b-lg flex justify-between ${isActive('distribusi-makanan') ? 'bg-[#5B9DF8] text-white' : 'bg-[#1E6BE0] text-blue-100 hover:bg-[#5B9DF8]/50'}`}
           >
             <span>Distribusi Makanan</span>
             {isActive('distribusi-makanan') && <span>&gt;</span>}
           </div>
+          */}
         </div>
       </nav>
 

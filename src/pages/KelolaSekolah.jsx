@@ -1,28 +1,55 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SidebarAdmin from '../SidebarAdmin'
+import { api } from '../api'
+
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-' }
+
+const PAGE_SIZE = 10
 
 export default function KelolaSekolah() {
   const [view, setView] = useState('list')
+  const [list, setList] = useState([])
+  const [selected, setSelected] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [gradeFilter, setGradeFilter] = useState('')
+  const [page, setPage] = useState(1)
 
-  const dataSekolah = [
-    { nama: 'SDN 1 Subang', jenjang: 'SD', siswa: 90, sppg: 'SPPG Indonesia', alergi: '7 Siswa Alergi' },
-    { nama: 'SDN 2 Subang', jenjang: 'SD', siswa: 91, sppg: 'SPPG Ceria', alergi: '4 Siswa Alergi' },
-    { nama: 'SDN 3 Subang', jenjang: 'SD', siswa: 91, sppg: 'SPPG Ceria', alergi: '-' },
-    { nama: 'SDN 4 Subang', jenjang: 'SD', siswa: 90, sppg: 'SPPG Sekolah Kita', alergi: '1 Siswa Alergi' },
-    { nama: 'SMPN 1 Subang', jenjang: 'SMP', siswa: 311, sppg: 'SPPG Indonesia', alergi: '12 Siswa Alergi' },
-    { nama: 'SMPN 2 Subang', jenjang: 'SMP', siswa: 298, sppg: 'SPPG Anak Sekolah', alergi: '4 Siswa Alergi' },
-    { nama: 'SMPN 3 Subang', jenjang: 'SMP', siswa: 322, sppg: 'SPPG Sekolah Kita', alergi: '7 Siswa Alergi' },
-    { nama: 'SMAN 1 Subang', jenjang: 'SMA', siswa: 341, sppg: 'SPPG Sekolah Kita', alergi: '5 Siswa Alergi' },
-    { nama: 'SMAN 2 Subang', jenjang: 'SMA', siswa: 355, sppg: 'SPPG Anak Sekolah', alergi: '1 Siswa Alergi' },
-  ]
+  useEffect(() => {
+    api.get('/admin/schools')
+      .then((res) => setList(res.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const openDetail = async (id) => {
+    try {
+      const res = await api.get(`/admin/schools/${id}`)
+      setSelected(res.data)
+      setView('detail')
+    } catch {}
+  }
+
+  const filtered = list.filter((s) => {
+    const matchSearch = !search || s.name.toLowerCase().includes(search.toLowerCase())
+    const matchGrade = !gradeFilter || s.grade === gradeFilter
+    return matchSearch && matchGrade
+  })
+
+  const grades = [...new Set(list.map((s) => s.grade).filter(Boolean))]
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  const handleSearch = (val) => { setSearch(val); setPage(1) }
+  const handleGrade = (val) => { setGradeFilter(val); setPage(1) }
 
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      
       <main className="flex-1 p-8 overflow-y-auto">
-        
-        {/* --- TAMPILAN DAFTAR SEKOLAH --- */}
+
         {view === 'list' && (
           <div className="max-w-6xl mx-auto">
             <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
@@ -30,99 +57,126 @@ export default function KelolaSekolah() {
               <p className="text-lg font-bold text-gray-700">Kelola Sekolah</p>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-              <div className="p-8 flex justify-between items-center border-b border-gray-100">
-                <h2 className="text-xl font-black text-gray-900 leading-snug w-1/3">
-                  Daftar Sekolah -<br/>Kec. Ciasem, Subang
-                </h2>
-                <div className="flex gap-4 w-2/3 justify-end items-center">
-                  <input 
-                    type="text" 
-                    placeholder="Cari....." 
-                    className="bg-[#D1E9FF] px-6 py-3 rounded-xl outline-none w-1/2 font-bold text-gray-700 placeholder-gray-500" 
+            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Utama</p>
+                  <h2 className="text-lg font-black text-gray-800 leading-tight">Daftar Sekolah</h2>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    placeholder="Cari sekolah..."
+                    value={search}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-52 px-4 py-2 rounded-lg text-sm outline-none bg-[#D1E9FF] border border-[#A5D5FF] text-gray-700 placeholder-gray-400 focus:border-[#2577F1] transition"
                   />
-                  <select className="bg-[#D1E9FF] px-6 py-3 rounded-xl font-bold text-gray-800 outline-none cursor-pointer border-r-8 border-transparent">
-                    <option>Semua (9)</option>
-                    <option>SD (4)</option>
-                    <option>SMP (3)</option>
-                    <option>SMA (2)</option>
+                  <select
+                    value={gradeFilter}
+                    onChange={(e) => handleGrade(e.target.value)}
+                    className="px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-[#D1E9FF] border border-[#A5D5FF] outline-none cursor-pointer focus:border-[#2577F1] transition"
+                  >
+                    <option value="">Semua Jenjang</option>
+                    {grades.map((g) => <option key={g} value={g}>{g}</option>)}
                   </select>
+                </div>
+                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2">
+                  <span className="text-2xl font-black text-[#2577F1] leading-none">{list.length}</span>
+                  <span className="text-xs font-semibold text-gray-500 leading-tight">Total<br/>Sekolah</span>
                 </div>
               </div>
 
-              <table className="w-full text-sm text-center">
-                <thead className="bg-[#EAEAEA] text-gray-800 font-bold">
-                  <tr>
-                    <th className="p-4 text-left pl-8 w-[20%]">Nama Sekolah</th>
-                    <th className="p-4 w-[10%]">Jenjang</th>
-                    <th className="p-4 w-[15%]">Jumlah<br/>Siswa</th>
-                    <th className="p-4 w-[20%]">SPPG<br/>Pemasok</th>
-                    <th className="p-4 w-[20%]">Data<br/>Alergi</th>
-                    <th className="p-4 w-[15%]"></th>
-                  </tr>
-                </thead>
-                <tbody className="font-bold text-gray-700">
-                  {dataSekolah.map((sekolah, index) => (
-                    <tr key={index} className="border-b border-gray-100">
-                      <td className="p-4 text-left pl-8">{sekolah.nama}</td>
-                      <td className="p-4">{sekolah.jenjang}</td>
-                      <td className="p-4">{sekolah.siswa}</td>
-                      <td className="p-4">{sekolah.sppg}</td>
-                      <td className="p-4">{sekolah.alergi}</td>
-                      <td className="p-4">
-                        <button 
-                          onClick={() => setView('detail')}
-                          className="bg-[#1E73E8] text-white px-5 py-1.5 rounded-md text-xs hover:bg-blue-700 transition"
-                        >
-                          Detail
-                        </button>
-                      </td>
+              {loading ? (
+                <div className="p-10 text-center text-gray-400 font-bold">Memuat data...</div>
+              ) : (
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
+                    <tr>
+                      <th className="px-4 py-2.5 border border-gray-300">Nama Sekolah</th>
+                      <th className="px-4 py-2.5 border border-gray-300 text-center">Jenjang</th>
+                      <th className="px-4 py-2.5 border border-gray-300 text-center">Jml. Siswa</th>
+                      <th className="px-4 py-2.5 border border-gray-300 text-center">SPPG Pemasok</th>
+                      <th className="px-4 py-2.5 border border-gray-300 text-center">Status</th>
+                      <th className="px-4 py-2.5 border border-gray-300 text-center">Aksi</th>
                     </tr>
+                  </thead>
+                  <tbody className="text-gray-700">
+                    {filtered.length === 0 && (
+                      <tr><td colSpan={6} className="px-4 py-6 text-center text-gray-400 font-semibold border border-gray-200">Belum ada data sekolah</td></tr>
+                    )}
+                    {paginated.map((s) => (
+                      <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-2.5 border border-gray-200 font-semibold text-gray-800 whitespace-nowrap">{s.name}</td>
+                        <td className="px-4 py-2.5 border border-gray-200 text-center text-gray-600 whitespace-nowrap">{s.grade || '-'}</td>
+                        <td className="px-4 py-2.5 border border-gray-200 text-center font-semibold">{s.student_count || 0}</td>
+                        <td className="px-4 py-2.5 border border-gray-200 text-center text-gray-600">{s.sppg_name || '-'}</td>
+                        <td className="px-4 py-2.5 border border-gray-200 text-center">
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                            {s.status === 'active' ? 'Aktif' : s.status || '-'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2.5 border border-gray-200 text-center">
+                          <button
+                            onClick={() => openDetail(s.id)}
+                            className="bg-[#2577F1] text-white px-4 py-1 rounded-full text-xs font-semibold hover:bg-blue-700 transition"
+                          >
+                            Detail
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {!loading && (
+                <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
+                  <span className="text-xs text-gray-500 mr-2">
+                    {filtered.length === 0 ? '0' : `${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, filtered.length)}`} dari {filtered.length} sekolah
+                  </span>
+                  <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
+                    className="px-2.5 py-1 rounded border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                    &lsaquo;
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    <button key={p} onClick={() => setPage(p)}
+                      className={`px-2.5 py-1 rounded border text-xs font-semibold transition-colors ${p === currentPage ? 'bg-[#2577F1] text-white border-[#2577F1]' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}>
+                      {p}
+                    </button>
                   ))}
-                </tbody>
-              </table>
+                  <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                    className="px-2.5 py-1 rounded border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                    &rsaquo;
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* --- TAMPILAN DETAIL SEKOLAH --- */}
-        {view === 'detail' && (
+        {view === 'detail' && selected && (
           <div className="max-w-5xl mx-auto">
-            {/* Top Bar Navigation */}
             <div className="flex items-center gap-4 mb-6 p-4 border-b border-[#A5D5FF]">
-              <button 
-                onClick={() => setView('list')} 
-                className="text-3xl font-black text-gray-900 hover:text-blue-600 transition"
-              >
+              <button onClick={() => setView('list')} className="text-3xl font-black text-gray-900 hover:text-blue-600 transition">
                 &lt;
               </button>
-              <h1 className="text-xl font-black text-gray-900">SDN 1 Subang</h1>
+              <h1 className="text-xl font-black text-gray-900">{selected.name}</h1>
             </div>
 
-            {/* Content Detail */}
             <div className="flex gap-10">
-              
-              {/* Kiri: Foto dan Alamat */}
               <div className="w-1/2">
-                <img 
-                  src="/sekolah.png" 
-                  alt="Foto SDN 1 Subang" 
-                  className="w-full h-auto object-cover rounded-sm mb-4 shadow-sm"
-                />
-                <p className="text-sm font-semibold text-gray-800 leading-snug">
-                  Jl. H.O. Iskandar, Desa No.60, Subang, Kec. Subang, Kabupaten Kuningan, Jawa Barat 45586
-                </p>
+                <img src="/sekolah.png" alt="Foto Sekolah" className="w-full h-auto object-cover rounded-sm mb-4 shadow-sm" />
               </div>
 
-              {/* Kanan: Informasi Detail */}
               <div className="w-1/2 space-y-3 mt-4">
-                <h2 className="text-2xl font-black text-gray-900 mb-4">SD Negeri 1 Subang</h2>
-                <p className="text-lg font-medium text-gray-900">Status: Aktif</p>
-                <p className="text-lg font-medium text-gray-900">E-mail: SDN1.Subang@ac.id</p>
-                <p className="text-lg font-medium text-gray-900">Jumlah Guru: 10</p>
-                <p className="text-lg font-medium text-gray-900">Jumlah Siswa: 90</p>
+                <h2 className="text-2xl font-black text-gray-900 mb-4">{selected.name}</h2>
+                <p className="text-lg font-medium text-gray-800">Status: {selected.status === 'active' ? 'Aktif' : selected.status || '-'}</p>
+                <p className="text-lg font-medium text-gray-800">E-mail: {selected.email || '-'}</p>
+                <p className="text-lg font-medium text-gray-800">Jumlah Guru: {selected.teacher_count || 0}</p>
+                <p className="text-lg font-medium text-gray-800">Jumlah Siswa: {selected.student_count || 0}</p>
+                <p className="text-lg font-medium text-gray-800">SPPG Pemasok: {selected.sppg_name || '-'}</p>
+                <p className="text-lg font-medium text-gray-800">Alamat: {selected.address || '-'}</p>
               </div>
-
             </div>
           </div>
         )}

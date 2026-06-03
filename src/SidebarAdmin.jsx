@@ -109,7 +109,6 @@ export default function SidebarAdmin() {
             <span>Laporan Masuk</span>
             {isActive('laporan-masuk') && <span>&gt;</span>}
           </div>
-          {/* coming soon
           <div
             onClick={() => navigate('/admin/distribusi-makanan')}
             className={`p-3 text-sm font-semibold cursor-pointer rounded-b-lg flex justify-between ${isActive('distribusi-makanan') ? 'bg-[#5B9DF8] text-white' : 'bg-[#1E6BE0] text-blue-100 hover:bg-[#5B9DF8]/50'}`}
@@ -117,7 +116,6 @@ export default function SidebarAdmin() {
             <span>Distribusi Makanan</span>
             {isActive('distribusi-makanan') && <span>&gt;</span>}
           </div>
-          */}
         </div>
       </nav>
 

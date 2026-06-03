@@ -6,7 +6,7 @@ export default function AuthAdmin() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [regForm, setRegForm] = useState({ name: '', email: '', password: '', phone: '' })
+  const [regForm, setRegForm] = useState({ name: '', email: '', password: '', phone: '', registration_secret: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
@@ -148,6 +148,13 @@ export default function AuthAdmin() {
                 <label className="block text-xs font-bold text-gray-700 mb-2">📱 No. Handphone</label>
                 <input type="text" value={regForm.phone} onChange={setReg('phone')} required
                   className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 bg-gray-50 text-sm" />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-xs font-bold text-gray-700 mb-2">🔑 Kode Registrasi Admin</label>
+                <input type="text" value={regForm.registration_secret} onChange={setReg('registration_secret')} required
+                  placeholder="Diperoleh dari super admin"
+                  className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 bg-gray-50 text-sm" />
+                <p className="text-[10px] text-gray-500 mt-1">Hubungi super admin untuk memperoleh kode registrasi.</p>
               </div>
               <button type="submit" disabled={loading}
                 className="col-span-2 w-full bg-[#007BFF] text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition text-sm mt-2 disabled:opacity-60">

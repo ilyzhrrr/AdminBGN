@@ -50,12 +50,12 @@ export default function DistribusiMakanan() {
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 overflow-y-auto min-w-0">
         <div className="max-w-6xl mx-auto">
 
-          <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
-            <h1 className="text-4xl font-black text-gray-900">Pelaporan</h1>
-            <p className="text-lg font-bold text-gray-700">Distribusi Makanan</p>
+          <div className="mb-6 sm:mb-8 text-center border-b border-[#A5D5FF] pb-4">
+            <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Pelaporan</h1>
+            <p className="text-base sm:text-lg font-bold text-gray-700">Distribusi Makanan</p>
           </div>
 
           <div className="mb-6">
@@ -63,29 +63,29 @@ export default function DistribusiMakanan() {
               type="date"
               value={dateFilter}
               onChange={handleDateChange}
-              className="bg-[#D1D5DB] px-4 py-2 rounded-lg font-bold text-gray-800 text-sm outline-none cursor-pointer"
+              className="bg-[#D1D5DB] px-4 py-2 rounded-lg font-bold text-gray-800 text-sm outline-none cursor-pointer w-full sm:w-auto"
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm py-10">
-              <span className="text-5xl mb-2 text-[#2577F1]">🚚</span>
-              <span className="text-6xl font-black text-gray-900">{summary.total}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm sm:py-10">
+              <span className="text-4xl sm:text-5xl mb-2 text-[#2577F1]">🚚</span>
+              <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900">{summary.total}</span>
               <p className="text-sm font-bold text-gray-800 mt-2">Total Distribusi</p>
             </div>
-            <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm py-10">
-              <span className="text-5xl mb-2 text-yellow-500">🕒</span>
-              <span className="text-6xl font-black text-gray-900">{summary.in_delivery}</span>
+            <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm sm:py-10">
+              <span className="text-4xl sm:text-5xl mb-2 text-yellow-500">🕒</span>
+              <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900">{summary.in_delivery}</span>
               <p className="text-sm font-bold text-gray-800 mt-2">Dalam Pengiriman</p>
             </div>
-            <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm py-10">
-              <span className="text-5xl mb-2 text-green-500">✅</span>
-              <span className="text-6xl font-black text-gray-900">{summary.received}</span>
+            <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm sm:py-10">
+              <span className="text-4xl sm:text-5xl mb-2 text-green-500">✅</span>
+              <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900">{summary.received}</span>
               <p className="text-sm font-bold text-gray-800 mt-2">Diterima</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-sm p-8">
+          <div className="bg-white rounded-3xl shadow-sm p-5 sm:p-8">
             <h3 className="font-bold text-gray-600 mb-6 text-lg">
               {dateFilter ? fmtDate(dateFilter) : 'Semua Distribusi'}
             </h3>
@@ -97,8 +97,8 @@ export default function DistribusiMakanan() {
             ) : (
               <div className="space-y-4">
                 {list.map((item) => (
-                  <div key={item.id} className="bg-[#D1F4FA] rounded-xl p-5 flex items-center justify-between">
-                    <div className="flex items-start gap-4 w-4/5">
+                  <div key={item.id} className="bg-[#D1F4FA] rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="flex items-start gap-4 sm:w-4/5">
                       <span className="text-3xl mt-1">🏫</span>
                       <div className="space-y-1">
                         <h4 className="font-black text-gray-900 text-base">Sekolah #{item.school_id}</h4>
@@ -110,7 +110,7 @@ export default function DistribusiMakanan() {
                       </div>
                     </div>
 
-                    <div className="w-1/5 flex flex-col items-end gap-2">
+                    <div className="sm:w-1/5 flex flex-row sm:flex-col items-start sm:items-end gap-2 flex-wrap">
                       {item.status === 'diterima' ? (
                         <span className="bg-[#4CAF50] text-white px-5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm">
                           ✓ Diterima

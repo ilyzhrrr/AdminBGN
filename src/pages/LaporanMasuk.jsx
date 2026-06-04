@@ -71,26 +71,26 @@ export default function LaporanMasuk() {
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 overflow-y-auto min-w-0">
 
         {view === 'list' && (
           <div className="max-w-6xl mx-auto">
-            <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
-              <h1 className="text-4xl font-black text-gray-900">Pelaporan</h1>
-              <p className="text-lg font-bold text-gray-700">Laporan Masuk</p>
+            <div className="mb-6 sm:mb-8 text-center border-b border-[#A5D5FF] pb-4">
+              <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Pelaporan</h1>
+              <p className="text-base sm:text-lg font-bold text-gray-700">Laporan Masuk</p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between gap-4">
+              <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Pelaporan</p>
-                  <h2 className="text-lg font-black text-gray-800 leading-tight">Laporan Masuk</h2>
+                  <h2 className="text-base sm:text-lg font-black text-gray-800 leading-tight">Laporan Masuk</h2>
                 </div>
-                <div className="bg-[#EEF5FF] border border-[#A5D5FF] px-4 py-2 rounded-lg font-bold text-gray-700 text-sm flex items-center gap-2">
+                <div className="bg-[#EEF5FF] border border-[#A5D5FF] px-4 py-2 rounded-lg font-bold text-gray-700 text-xs sm:text-sm flex items-center gap-2">
                   <span>📅</span>
                   <span>{new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2 self-start lg:self-auto">
                   <span className="text-2xl font-black text-[#2577F1] leading-none">{list.length}</span>
                   <span className="text-xs font-semibold text-gray-500 leading-tight">Total<br/>Laporan</span>
                 </div>
@@ -99,7 +99,8 @@ export default function LaporanMasuk() {
               {loading ? (
                 <div className="p-10 text-center text-gray-400 font-bold">Memuat data...</div>
               ) : (
-                <table className="w-full text-sm text-left border-collapse">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[640px] text-sm text-left border-collapse">
                   <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
                     <tr>
                       <th className="px-4 py-2.5 border border-gray-300">ID Laporan</th>
@@ -133,10 +134,11 @@ export default function LaporanMasuk() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               )}
 
               {!loading && (
-                <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
+                <div className="flex flex-wrap justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
                   <span className="text-xs text-gray-500 mr-2">
                     {list.length === 0 ? '0' : `${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, list.length)}`} dari {list.length} laporan
                   </span>
@@ -162,13 +164,13 @@ export default function LaporanMasuk() {
 
         {view === 'detail' && selected && (
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 mb-8 border-b border-[#A5D5FF] pb-4">
-              <button onClick={() => setView('list')} className="text-4xl font-black text-gray-900 hover:text-blue-600 transition">
+            <div className="flex items-center gap-4 mb-6 sm:mb-8 border-b border-[#A5D5FF] pb-4">
+              <button onClick={() => setView('list')} className="text-3xl sm:text-4xl font-black text-gray-900 hover:text-blue-600 transition shrink-0">
                 &lt;
               </button>
               <div>
-                <h1 className="text-2xl font-black text-gray-900">Detail Laporan Masuk</h1>
-                <p className="text-gray-700 font-bold">Laporan #{selected.id}</p>
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900">Detail Laporan Masuk</h1>
+                <p className="text-gray-700 font-bold text-sm sm:text-base">Laporan #{selected.id}</p>
               </div>
             </div>
 
@@ -178,8 +180,8 @@ export default function LaporanMasuk() {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl shadow-sm p-8 font-medium">
-              <div className="grid grid-cols-2 gap-8 mb-8">
+            <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-8 font-medium">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mb-6 sm:mb-8">
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-bold text-gray-500 mb-1">ID Sekolah</label>
@@ -234,11 +236,11 @@ export default function LaporanMasuk() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-4 border-t border-gray-100 pt-6">
-                <button onClick={() => setView('list')} className="px-8 py-3 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">
+              <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4 border-t border-gray-100 pt-6">
+                <button onClick={() => setView('list')} className="px-6 sm:px-8 py-3 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition order-2 sm:order-1">
                   Kembali
                 </button>
-                <button onClick={saveStatus} disabled={updating} className="bg-[#2577F1] text-white px-8 py-3 rounded-xl font-bold shadow-sm hover:bg-blue-700 transition disabled:opacity-60">
+                <button onClick={saveStatus} disabled={updating} className="bg-[#2577F1] text-white px-6 sm:px-8 py-3 rounded-xl font-bold shadow-sm hover:bg-blue-700 transition disabled:opacity-60 order-1 sm:order-2">
                   {updating ? 'Menyimpan...' : 'Simpan Perubahan'}
                 </button>
               </div>

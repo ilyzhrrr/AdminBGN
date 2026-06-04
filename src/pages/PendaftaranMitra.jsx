@@ -58,22 +58,22 @@ export default function PendaftaranMitra() {
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 overflow-y-auto min-w-0">
 
         {view === 'list' && (
           <div className="max-w-5xl mx-auto">
-            <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
-              <h1 className="text-4xl font-black text-gray-900">Pendaftaran</h1>
-              <p className="text-lg font-bold text-gray-700">Pendaftaran Mitra</p>
+            <div className="mb-6 sm:mb-8 text-center border-b border-[#A5D5FF] pb-4">
+              <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Pendaftaran</h1>
+              <p className="text-base sm:text-lg font-bold text-gray-700">Pendaftaran Mitra</p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between gap-4">
+              <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Pendaftaran</p>
-                  <h2 className="text-lg font-black text-gray-800 leading-tight">Daftar Pendaftaran Mitra SPPG</h2>
+                  <h2 className="text-base sm:text-lg font-black text-gray-800 leading-tight">Daftar Pendaftaran Mitra SPPG</h2>
                 </div>
-                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2 self-start sm:self-auto">
                   <span className="text-2xl font-black text-[#2577F1] leading-none">{list.length}</span>
                   <span className="text-xs font-semibold text-gray-500 leading-tight">Total<br/>Pendaftar</span>
                 </div>
@@ -82,7 +82,8 @@ export default function PendaftaranMitra() {
               {loading ? (
                 <div className="p-10 text-center text-gray-400 font-bold">Memuat data...</div>
               ) : (
-                <table className="w-full text-sm text-left border-collapse">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[560px] text-sm text-left border-collapse">
                   <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
                     <tr>
                       <th className="px-4 py-2.5 border border-gray-300">Nama SPPG</th>
@@ -114,10 +115,11 @@ export default function PendaftaranMitra() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               )}
 
               {!loading && (
-                <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
+                <div className="flex flex-wrap justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
                   <span className="text-xs text-gray-500 mr-2">
                     {list.length === 0 ? '0' : `${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, list.length)}`} dari {list.length} pendaftar
                   </span>
@@ -143,11 +145,11 @@ export default function PendaftaranMitra() {
 
         {view === 'detail' && selected && (
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-center relative mb-8">
-              <button onClick={() => setView('list')} className="absolute left-0 text-4xl font-black text-gray-900 hover:text-blue-600 transition">
+            <div className="flex items-center gap-3 sm:gap-0 sm:justify-center sm:relative mb-6 sm:mb-8">
+              <button onClick={() => setView('list')} className="sm:absolute sm:left-0 text-3xl sm:text-4xl font-black text-gray-900 hover:text-blue-600 transition shrink-0">
                 &lt;
               </button>
-              <div className="bg-[#2577F1] text-white px-10 py-3 rounded-lg font-bold text-xl shadow-sm">
+              <div className="bg-[#2577F1] text-white px-4 sm:px-10 py-3 rounded-lg font-bold text-base sm:text-xl shadow-sm flex-1 sm:flex-none text-center">
                 Formulir Pendaftaran Mitra SPPG
               </div>
             </div>
@@ -158,10 +160,10 @@ export default function PendaftaranMitra() {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-sm p-10 font-medium space-y-8">
+            <div className="bg-white rounded-xl shadow-sm p-5 sm:p-10 font-medium space-y-6 sm:space-y-8">
               <div>
                 <h3 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Data Mitra</h3>
-                <div className="space-y-4 px-4">
+                <div className="space-y-4 sm:px-4">
                   {[
                     ['Nama Pendaftar', selected.registrant_name],
                     ['Nama Instansi', selected.institution_name || '-'],
@@ -178,7 +180,7 @@ export default function PendaftaranMitra() {
 
               <div>
                 <h3 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Data SPPG</h3>
-                <div className="space-y-4 px-4">
+                <div className="space-y-4 sm:px-4">
                   {[
                     ['Nama SPPG', selected.sppg_name],
                     ['Alamat SPPG', selected.sppg_address],
@@ -192,16 +194,16 @@ export default function PendaftaranMitra() {
                 </div>
               </div>
 
-              <div className="flex justify-center gap-6 px-4 pt-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 sm:px-4 pt-4">
                 {selected.status !== 'disetujui' && (
                   <button onClick={() => updateStatus(selected.id, 'disetujui')} disabled={updating}
-                    className="bg-[#2577F1] text-white px-10 py-3 rounded-lg font-bold w-1/3 hover:bg-blue-700 transition shadow-sm disabled:opacity-60">
+                    className="bg-[#2577F1] text-white px-6 sm:px-10 py-3 rounded-lg font-bold w-full sm:w-1/3 hover:bg-blue-700 transition shadow-sm disabled:opacity-60">
                     {updating ? 'Memproses...' : 'Setujui & Buat Akun'}
                   </button>
                 )}
                 {selected.status !== 'verifikasi' && selected.status !== 'disetujui' && (
                   <button onClick={() => updateStatus(selected.id, 'verifikasi')} disabled={updating}
-                    className="bg-yellow-500 text-white px-10 py-3 rounded-lg font-bold w-1/3 hover:bg-yellow-600 transition shadow-sm disabled:opacity-60">
+                    className="bg-yellow-500 text-white px-6 sm:px-10 py-3 rounded-lg font-bold w-full sm:w-1/3 hover:bg-yellow-600 transition shadow-sm disabled:opacity-60">
                     Tandai Verifikasi
                   </button>
                 )}

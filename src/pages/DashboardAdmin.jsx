@@ -32,40 +32,40 @@ export default function DashboardAdmin() {
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 overflow-y-auto min-w-0">
         <div className="max-w-6xl mx-auto space-y-6">
-          <h1 className="text-4xl font-black text-gray-900 mb-8 text-center">Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 mb-6 sm:mb-8 text-center">Dashboard</h1>
 
           {loading ? (
             <div className="text-center py-20 text-gray-500 font-bold">Memuat data...</div>
           ) : (
             <>
-              <div className="grid grid-cols-3 gap-6">
-                <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm">
-                  <span className="text-5xl mb-2 text-[#2577F1]">🏢</span>
-                  <span className="text-6xl font-black text-gray-900">{fmt(d.total_sppg)}</span>
-                  <p className="text-lg font-bold text-gray-800">Mitra SPPG</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-white rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-center shadow-sm">
+                  <span className="text-4xl sm:text-5xl mb-2 text-[#2577F1]">🏢</span>
+                  <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900">{fmt(d.total_sppg)}</span>
+                  <p className="text-base sm:text-lg font-bold text-gray-800">Mitra SPPG</p>
                 </div>
-                <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm">
-                  <span className="text-5xl mb-2">🏫</span>
-                  <span className="text-6xl font-black text-gray-900">{fmt(d.total_school)}</span>
-                  <p className="text-lg font-bold text-gray-800">Sekolah Terdaftar</p>
+                <div className="bg-white rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-center shadow-sm">
+                  <span className="text-4xl sm:text-5xl mb-2">🏫</span>
+                  <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900">{fmt(d.total_school)}</span>
+                  <p className="text-base sm:text-lg font-bold text-gray-800">Sekolah Terdaftar</p>
                 </div>
-                <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center shadow-sm">
-                  <span className="text-5xl mb-2">🎓</span>
-                  <span className="text-6xl font-black text-gray-900">{fmt(d.total_student)}</span>
-                  <p className="text-lg font-bold text-gray-800">Total Siswa</p>
+                <div className="bg-white rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-center shadow-sm">
+                  <span className="text-4xl sm:text-5xl mb-2">🎓</span>
+                  <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900">{fmt(d.total_student)}</span>
+                  <p className="text-base sm:text-lg font-bold text-gray-800">Total Siswa</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-gray-800">Pendaftaran Mitra Terbaru</h3>
                     <span onClick={() => navigate('/admin/pendaftaran-mitra')}
                       className="text-sm text-blue-600 font-bold cursor-pointer hover:underline">Lihat Semua</span>
                   </div>
-                  <div className="overflow-hidden rounded-xl border border-gray-200 flex-1">
+                  <div className="overflow-x-auto rounded-xl border border-gray-200 flex-1">
                     <table className="w-full text-sm text-left border-collapse">
                       <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
                         <tr>
@@ -114,7 +114,7 @@ export default function DashboardAdmin() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <div className="bg-white rounded-3xl p-6 shadow-sm">
                   <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2">
                     <span className="text-blue-500 text-lg">📊</span> Status SPPG

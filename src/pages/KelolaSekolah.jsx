@@ -48,28 +48,28 @@ export default function KelolaSekolah() {
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 overflow-y-auto min-w-0">
 
         {view === 'list' && (
           <div className="max-w-6xl mx-auto">
-            <div className="mb-8 text-center border-b border-[#A5D5FF] pb-4">
-              <h1 className="text-4xl font-black text-gray-900">Utama</h1>
-              <p className="text-lg font-bold text-gray-700">Kelola Sekolah</p>
+            <div className="mb-6 sm:mb-8 text-center border-b border-[#A5D5FF] pb-4">
+              <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Utama</h1>
+              <p className="text-base sm:text-lg font-bold text-gray-700">Kelola Sekolah</p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between gap-4">
+              <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Utama</p>
-                  <h2 className="text-lg font-black text-gray-800 leading-tight">Daftar Sekolah</h2>
+                  <h2 className="text-base sm:text-lg font-black text-gray-800 leading-tight">Daftar Sekolah</h2>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <input
                     type="text"
                     placeholder="Cari sekolah..."
                     value={search}
                     onChange={(e) => handleSearch(e.target.value)}
-                    className="w-52 px-4 py-2 rounded-lg text-sm outline-none bg-[#D1E9FF] border border-[#A5D5FF] text-gray-700 placeholder-gray-400 focus:border-[#2577F1] transition"
+                    className="w-full sm:w-52 px-4 py-2 rounded-lg text-sm outline-none bg-[#D1E9FF] border border-[#A5D5FF] text-gray-700 placeholder-gray-400 focus:border-[#2577F1] transition"
                   />
                   <select
                     value={gradeFilter}
@@ -80,7 +80,7 @@ export default function KelolaSekolah() {
                     {grades.map((g) => <option key={g} value={g}>{g}</option>)}
                   </select>
                 </div>
-                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2 self-start lg:self-auto">
                   <span className="text-2xl font-black text-[#2577F1] leading-none">{list.length}</span>
                   <span className="text-xs font-semibold text-gray-500 leading-tight">Total<br/>Sekolah</span>
                 </div>
@@ -89,7 +89,8 @@ export default function KelolaSekolah() {
               {loading ? (
                 <div className="p-10 text-center text-gray-400 font-bold">Memuat data...</div>
               ) : (
-                <table className="w-full text-sm text-left border-collapse">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[720px] text-sm text-left border-collapse">
                   <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
                     <tr>
                       <th className="px-4 py-2.5 border border-gray-300">Nama Sekolah</th>
@@ -127,10 +128,11 @@ export default function KelolaSekolah() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               )}
 
               {!loading && (
-                <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
+                <div className="flex flex-wrap justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
                   <span className="text-xs text-gray-500 mr-2">
                     {filtered.length === 0 ? '0' : `${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, filtered.length)}`} dari {filtered.length} sekolah
                   </span>
@@ -157,25 +159,25 @@ export default function KelolaSekolah() {
         {view === 'detail' && selected && (
           <div className="max-w-5xl mx-auto">
             <div className="flex items-center gap-4 mb-6 p-4 border-b border-[#A5D5FF]">
-              <button onClick={() => setView('list')} className="text-3xl font-black text-gray-900 hover:text-blue-600 transition">
+              <button onClick={() => setView('list')} className="text-3xl font-black text-gray-900 hover:text-blue-600 transition shrink-0">
                 &lt;
               </button>
-              <h1 className="text-xl font-black text-gray-900">{selected.name}</h1>
+              <h1 className="text-lg sm:text-xl font-black text-gray-900 break-words">{selected.name}</h1>
             </div>
 
-            <div className="flex gap-10">
-              <div className="w-1/2">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+              <div className="w-full md:w-1/2">
                 <img src="/sekolah.png" alt="Foto Sekolah" className="w-full h-auto object-cover rounded-sm mb-4 shadow-sm" />
               </div>
 
-              <div className="w-1/2 space-y-3 mt-4">
-                <h2 className="text-2xl font-black text-gray-900 mb-4">{selected.name}</h2>
-                <p className="text-lg font-medium text-gray-800">Status: {selected.status === 'active' ? 'Aktif' : selected.status || '-'}</p>
-                <p className="text-lg font-medium text-gray-800">E-mail: {selected.email || '-'}</p>
-                <p className="text-lg font-medium text-gray-800">Jumlah Guru: {selected.teacher_count || 0}</p>
-                <p className="text-lg font-medium text-gray-800">Jumlah Siswa: {selected.student_count || 0}</p>
-                <p className="text-lg font-medium text-gray-800">SPPG Pemasok: {selected.sppg_name || '-'}</p>
-                <p className="text-lg font-medium text-gray-800">Alamat: {selected.address || '-'}</p>
+              <div className="w-full md:w-1/2 space-y-3 mt-2 md:mt-4">
+                <h2 className="text-xl sm:text-2xl font-black text-gray-900 mb-3 sm:mb-4 break-words">{selected.name}</h2>
+                <p className="text-base sm:text-lg font-medium text-gray-800">Status: {selected.status === 'active' ? 'Aktif' : selected.status || '-'}</p>
+                <p className="text-base sm:text-lg font-medium text-gray-800 break-words">E-mail: {selected.email || '-'}</p>
+                <p className="text-base sm:text-lg font-medium text-gray-800">Jumlah Guru: {selected.teacher_count || 0}</p>
+                <p className="text-base sm:text-lg font-medium text-gray-800">Jumlah Siswa: {selected.student_count || 0}</p>
+                <p className="text-base sm:text-lg font-medium text-gray-800">SPPG Pemasok: {selected.sppg_name || '-'}</p>
+                <p className="text-base sm:text-lg font-medium text-gray-800">Alamat: {selected.address || '-'}</p>
               </div>
             </div>
           </div>

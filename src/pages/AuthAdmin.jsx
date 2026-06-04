@@ -51,17 +51,17 @@ export default function AuthAdmin() {
   }
 
   return (
-    <div className="flex min-h-screen font-sans">
-      <aside className="w-1/2 bg-[#3B82F6] p-12 text-white flex flex-col relative justify-center">
-        <div className="absolute top-8 left-8 flex items-center gap-3 cursor-pointer">
+    <div className="flex flex-col lg:flex-row min-h-screen font-sans">
+      <aside className="w-full lg:w-1/2 bg-[#3B82F6] p-6 sm:p-12 text-white flex flex-col relative justify-center">
+        <div className="lg:absolute lg:top-8 lg:left-8 flex items-center gap-3 cursor-pointer mb-6 lg:mb-0">
           <img src="/logo.png" alt="Logo BGN" className="w-10 h-auto" />
-          <span className="text-xl font-bold">Admin BGN</span>
+          <span className="text-lg sm:text-xl font-bold">Admin BGN</span>
         </div>
-        <div className="text-center mb-4 mt-8">
-          <p className="text-lg font-medium opacity-90">Memantau SPPG Indonesia</p>
+        <div className="text-center mb-4 lg:mt-8">
+          <p className="text-base sm:text-lg font-medium opacity-90">Memantau SPPG Indonesia</p>
         </div>
-        <div className="mb-8 flex justify-center">
-          <img src="/utama.png" alt="Illustration Admin" className="w-full max-w-md" />
+        <div className="mb-6 sm:mb-8 flex justify-center">
+          <img src="/utama.png" alt="Illustration Admin" className="w-full max-w-xs sm:max-w-md" />
         </div>
         <div className="space-y-3 max-w-md mx-auto w-full">
           <div className="bg-white/25 p-3 rounded-xl flex items-center gap-3 text-xs font-semibold">
@@ -76,18 +76,18 @@ export default function AuthAdmin() {
         </div>
       </aside>
 
-      <main className="w-1/2 bg-[#D1E9FF] p-12 flex flex-col items-center justify-center relative">
+      <main className="w-full lg:w-1/2 bg-[#D1E9FF] p-6 sm:p-12 flex flex-col items-center justify-center relative">
         {showSuccess && isLogin && (
           <div className="absolute top-8 bg-green-500 text-white px-6 py-2 rounded-xl text-xs font-bold shadow-sm">
             Registrasi Berhasil! Silahkan Masuk
           </div>
         )}
 
-        <h2 className="text-4xl font-black text-[#1E3A8A] mb-8">
+        <h2 className="text-3xl sm:text-4xl font-black text-[#1E3A8A] mb-6 sm:mb-8 mt-8 lg:mt-0">
           {isLogin ? 'Masuk Admin' : 'Daftar Admin'}
         </h2>
 
-        <div className="bg-white p-10 rounded-3xl shadow-sm w-full max-w-xl">
+        <div className="bg-white p-6 sm:p-10 rounded-3xl shadow-sm w-full max-w-xl">
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-bold p-3 rounded-lg">
               {error}
@@ -120,7 +120,7 @@ export default function AuthAdmin() {
               </button>
             </form>
           ) : (
-            <form onSubmit={handleRegister} className="grid grid-cols-2 gap-5">
+            <form onSubmit={handleRegister} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-2">👤 Nama Lengkap</label>
                 <input type="text" value={regForm.name} onChange={setReg('name')} required
@@ -150,7 +150,7 @@ export default function AuthAdmin() {
                   className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 bg-gray-50 text-sm" />
               </div>
               <button type="submit" disabled={loading}
-                className="col-span-2 w-full bg-[#007BFF] text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition text-sm mt-2 disabled:opacity-60">
+                className="sm:col-span-2 w-full bg-[#007BFF] text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition text-sm mt-2 disabled:opacity-60">
                 {loading ? 'Mendaftar...' : 'Daftar'}
               </button>
             </form>

@@ -39,29 +39,29 @@ export default function KelolaSPPG() {
   return (
     <div className="flex min-h-screen bg-[#D1E9FF] font-sans">
       <SidebarAdmin />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 overflow-y-auto min-w-0">
 
         {view === 'list' && (
           <div className="max-w-6xl mx-auto">
-            <div className="mb-8 text-center">
-              <h1 className="text-4xl font-black text-gray-900">Utama</h1>
-              <p className="text-lg font-bold text-gray-700">Kelola SPPG</p>
+            <div className="mb-6 sm:mb-8 text-center">
+              <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Utama</h1>
+              <p className="text-base sm:text-lg font-bold text-gray-700">Kelola SPPG</p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between gap-4">
+              <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Utama</p>
-                  <h2 className="text-lg font-black text-gray-800 leading-tight">Daftar SPPG Aktif</h2>
+                  <h2 className="text-base sm:text-lg font-black text-gray-800 leading-tight">Daftar SPPG Aktif</h2>
                 </div>
                 <input
                   type="text"
                   placeholder="Cari SPPG..."
                   value={search}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-64 px-4 py-2 rounded-lg text-sm outline-none bg-[#D1E9FF] border border-[#A5D5FF] text-gray-700 placeholder-gray-400 focus:border-[#2577F1] transition"
+                  className="w-full sm:w-64 px-4 py-2 rounded-lg text-sm outline-none bg-[#D1E9FF] border border-[#A5D5FF] text-gray-700 placeholder-gray-400 focus:border-[#2577F1] transition"
                 />
-                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-[#EEF5FF] border border-[#A5D5FF] rounded-lg px-4 py-2 self-start sm:self-auto">
                   <span className="text-2xl font-black text-[#2577F1] leading-none">{list.length}</span>
                   <span className="text-xs font-semibold text-gray-500 leading-tight">Total<br/>SPPG</span>
                 </div>
@@ -70,7 +70,8 @@ export default function KelolaSPPG() {
               {loading ? (
                 <div className="p-10 text-center text-gray-400 font-bold">Memuat data...</div>
               ) : (
-                <table className="w-full text-sm text-left border-collapse">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[640px] text-sm text-left border-collapse">
                   <thead className="bg-[#EAEAEA] text-gray-700 text-xs font-bold uppercase tracking-wide">
                     <tr>
                       <th className="px-4 py-2.5 border border-gray-300">Nama SPPG</th>
@@ -102,10 +103,11 @@ export default function KelolaSPPG() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               )}
 
               {!loading && (
-                <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
+                <div className="flex flex-wrap justify-end items-center gap-2 px-4 py-3 border-t border-gray-200">
                   <span className="text-xs text-gray-500 mr-2">
                     {filtered.length === 0 ? '0' : `${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, filtered.length)}`} dari {filtered.length} SPPG
                   </span>
@@ -135,22 +137,22 @@ export default function KelolaSPPG() {
               <button onClick={() => setView('list')} className="text-3xl font-black text-gray-900 hover:text-blue-600 transition">
                 &lt;
               </button>
-              <h1 className="text-2xl font-black text-gray-900">{selected.sppg_name}</h1>
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900 break-words">{selected.sppg_name}</h1>
             </div>
 
-            <div className="flex gap-8 items-start">
-              <div className="w-[45%]">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+              <div className="w-full md:w-[45%]">
                 {selected.kitchen_photo_path ? (
                   <img src={selected.kitchen_photo_path} alt="Foto Dapur" className="w-full h-auto object-cover border border-gray-300 rounded-sm mb-4 bg-gray-200" />
                 ) : (
                   <div className="w-full h-48 bg-gray-100 rounded-sm mb-4 flex items-center justify-center text-gray-400 font-bold">Foto Dapur</div>
                 )}
-                <p className="text-lg font-medium text-gray-900 pr-4">{selected.sppg_address}</p>
+                <p className="text-base sm:text-lg font-medium text-gray-900 pr-4">{selected.sppg_address}</p>
               </div>
 
-              <div className="w-[55%]">
-                <h2 className="text-3xl font-black text-gray-900 mb-6">{selected.sppg_name}</h2>
-                <div className="space-y-4 text-xl font-medium text-gray-900 mb-8">
+              <div className="w-full md:w-[55%]">
+                <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4 sm:mb-6 break-words">{selected.sppg_name}</h2>
+                <div className="space-y-3 sm:space-y-4 text-base sm:text-lg lg:text-xl font-medium text-gray-900 mb-6 sm:mb-8">
                   <p>Status: <span className="font-bold text-green-600">Disetujui</span></p>
                   <p>Pendaftar: {selected.registrant_name}</p>
                   <p>E-mail: {selected.email}</p>
